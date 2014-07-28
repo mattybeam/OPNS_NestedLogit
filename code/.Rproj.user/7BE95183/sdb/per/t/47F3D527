@@ -1,0 +1,17 @@
+{
+    "contents" : "makeData<-function(){\n  bucket=1:3\n  choice=c('A', 'B', 'C')\n  expand.grid(bucket=bucket, choice=choice) %>%\n    mutate(val=rnorm(n())) %>%\n    easy.save('choice_values.R')\n  \n  cbind(bucket=bucket, data.frame(lambda=runif(length(bucket)))) %>%\n    easy.save('lambda_values.R')\n}\n",
+    "created" : 1406513254930.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1483164207",
+    "id" : "47F3D527",
+    "lastKnownWriteTime" : 1406506513,
+    "path" : "~/Dropbox/teaching/OPNS910/assignments/OPNS910_Hendel2006/github/code/modules/makeData.R",
+    "project_path" : "modules/makeData.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

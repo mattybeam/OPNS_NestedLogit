@@ -1,0 +1,16 @@
+{
+    "contents" : "varSave<-'../variables/'\nex.mods<-'modules/'\nlibrary('plyr')\nlibrary('reshape2')\nlibrary('dplyr')\nl_ply(dir(ex.mods), function(l) source(paste(ex.mods, l, sep=\"\")))\n",
+    "created" : 1406408655784.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "227281866",
+    "id" : "8F57C230",
+    "lastKnownWriteTime" : 1406182421,
+    "path" : "~/Dropbox/teaching/OPNS910/assignments/OPNS910_Hendel2006/solution/code/header.R",
+    "project_path" : "header.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

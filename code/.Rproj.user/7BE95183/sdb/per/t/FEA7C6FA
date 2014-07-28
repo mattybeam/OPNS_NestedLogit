@@ -1,0 +1,16 @@
+{
+    "contents" : "sim.nested.choice<-function(val, lambda, S=10^3){\n  #simulate choices with the sequential decision outlined in Train (2009, section 4.2.3)\n  left_join(val, lambda, by='bucket') %>%\n    group_by(bucket) %>%\n    #calc inclusive value\n    summarise(lambda=unique(lambda), inclusive.val=log(sum(exp(val/lambda)))) %>%\n    mutate(inclusive.val=lambda*inclusive.val) %>%\n    merge(data.frame(trial=seq(S))) %>%\n    #make first round choice\n    mutate(val=as.numeric(inclusive.val+rgev(n(), xi = 0, mu = 0, beta = 1))) %>%\n    group_by(trial) %>%\n    filter(rank(-val, ties.method=\"first\")==1) %>%\n    select(-val) %>%\n    #make second round choice\n    left_join(val, by='bucket') %>%\n    mutate(value=as.numeric(val+lambda*rgev(n(), xi = 0, mu = 0, beta = 1))) %>%\n    filter(rank(-value, ties.method=\"first\")==1) %>%\n    select(trial, bucket, choice) %>%\n    ungroup()\n}  \n\nsim.nested.choice.poorly<-function(val, lambda, S=10^3){\n  #simulate choices with a single optimization, rather than the sequential decision.\n  left_join(val, lambda, by='bucket') %>%\n    merge(data.frame(trial=seq(S))) %>%\n    mutate(val=val+rgev(n(), xi = 0, mu = 0, beta = 1), val=as.numeric(val+lambda*rgev(n(), xi = 0, mu = 0, beta = 1))) %>%\n    group_by(trial) %>%\n    filter(rank(-val, ties.method=\"first\")==1) %>%\n    select(trial, bucket, choice) %>%\n    ungroup()\n}",
+    "created" : 1406513262445.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1979096823",
+    "id" : "FEA7C6FA",
+    "lastKnownWriteTime" : 1406511842,
+    "path" : "~/Dropbox/teaching/OPNS910/assignments/OPNS910_Hendel2006/github/code/modules/simChoices.R",
+    "project_path" : "modules/simChoices.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

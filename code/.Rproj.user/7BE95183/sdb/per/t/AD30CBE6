@@ -1,0 +1,16 @@
+{
+    "contents" : "calc.nested.prob<-function(val, lambda){\n  #Calculate theoretical choice probabilities\n  prob=left_join(val, lambda, by='bucket') %>%\n    mutate(val=exp(val/lambda))\n  group.vals=group_by(prob, bucket) %>%\n    summarise(group.val=sum(val)^(unique(lambda)-1))\n  left_join(prob, group.vals, by='bucket') %>%\n    mutate(\n      prob=val*group.val,\n      prob=prob/sum(prob)\n    ) %>%\n    select(bucket, choice, prob) %>%\n    arrange(bucket, choice)\n}",
+    "created" : 1406513118000.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "931266162",
+    "id" : "AD30CBE6",
+    "lastKnownWriteTime" : 1406513139,
+    "path" : "~/Dropbox/teaching/OPNS910/assignments/OPNS910_Hendel2006/github/code/modules/calcProbabilities.R",
+    "project_path" : "modules/calcProbabilities.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

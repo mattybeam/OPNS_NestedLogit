@@ -1,0 +1,16 @@
+{
+    "contents" : "#Nested logit coding assignment:\n#Simulate the nested logit, described in section 4.2 of Train (2009).\n#Use the lambda values given in the lambda_values.R file of the variables folder. \n#Use the baseline choice values given in the choice_values.R file of the variables folder. These values correspond to the Ynk values of equation (4.3) of Train (2009) (the corresponding Wnk values are zero). \n#Using the rgev() function of the library('fExtremes') package, simulate 1,000 choices using:\n#   (1) the two-stage choice framework outlined in section 4.2.3 of Train (2009).\n#   (2) a single stage choice framework, where the value of choice i of bucket k is Vi+epsilon_k+lambda_k*eta_i, where epsilon_k and eta_i are independent Gumbel distributions.\n#For each case, estimate the choice probabilities with your simulated choices\n#Conduct a Wald test with the null hypothesis that the estimated probabilities equal the theoretical probabilities given in equation (4.2) of Train (2009).\n\nsource('header.R')\n\n#makeData()\nval=easy.load('choice_values.R')\nlambda=easy.load('lambda_values.R')\n\n#get theoretical probabilities\nactual.prob=calc.nested.prob(val, lambda)\n\n#compare good simulation with actual values\nsim.probs=sim.nested.choice(val, lambda) %>% \n  estimate.probabilities()\nrun.wald(actual.prob=actual.prob$prob, sim.prob=sim.probs$prob$sim.prob, cov=sim.probs$cov) %>%\n  easy.save('good_sim_comparason.txt')\n\n#compare bad simulation with actual values\nsim.probs=sim.nested.choice.poorly(val, lambda) %>% \n  estimate.probabilities()\nrun.wald(actual.prob=actual.prob$prob, sim.prob=sim.probs$prob$sim.prob, cov=sim.probs$cov) %>%\n  easy.save('bad_sim_comparason.txt')\n",
+    "created" : 1406321825248.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "585650563",
+    "id" : "57AF97E9",
+    "lastKnownWriteTime" : 1406513086,
+    "path" : "~/Dropbox/teaching/OPNS910/assignments/OPNS910_Hendel2006/github/code/m.R",
+    "project_path" : "m.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
