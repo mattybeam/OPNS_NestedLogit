@@ -1,0 +1,16 @@
+{
+    "contents" : "#Nested logit coding assignment\nsource('header.R')\n\n#Load data\nval<-readRDS(paste0(varSave, 'choice_values.rds'))\nlambda<-readRDS(paste0(varSave, 'lambda_values.rds'))",
+    "created" : 1407992213066.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2161912324",
+    "id" : "DEE7B896",
+    "lastKnownWriteTime" : 1413429747,
+    "path" : "~/Dropbox/teaching/OPNS523/labs/OPNS_NestedLogit_lab/github/code/m.R",
+    "project_path" : "m.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
