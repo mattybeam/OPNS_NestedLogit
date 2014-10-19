@@ -1,0 +1,15 @@
+{
+    "contents" : "varSave<-'../variables/'\nex.mods<-'modules/'\nlibrary('fExtremes')\nlibrary('plyr')\nlibrary('reshape2')\nlibrary('dplyr')\nlibrary('doParallel')\nregisterDoParallel(cores=20)\nl_ply(dir(ex.mods), function(l) source(paste(ex.mods, l, sep=\"\")))\n",
+    "created" : 1413578632126.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "802835618",
+    "id" : "31FCC11B",
+    "lastKnownWriteTime" : 1413578399,
+    "path" : "C:/Users/Johnny Chan/Desktop/OPNS_NestedLogit/code/header.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

@@ -1,0 +1,16 @@
+{
+    "contents" : "#Nested logit coding assignment\nsource('header.R')\n\n#Load data\nval<-readRDS(paste0(varSave, 'choice_values.rds'))\nlambda<-readRDS(paste0(varSave, 'lambda_values.rds'))\n\n#Generate random draws\nsize = 10000\neps<- \n  rdply(3,rgev(size, xi = 0, mu = 0, beta = 1)) %>% \n  select(-1) %>% \n  t %>% \n  as.data.frame\ncolnames(eps)<- c(1,2,3)\neta<- \n  rdply(3,rgev(size, xi = 0, mu = 0, beta = 1)) %>% \n  select(-1) %>% \n  t %>% \n  as.data.frame\ncolnames(eta)<- c(\"A\",\"B\",\"C\")\n\n#Method 2\ntypes<- data.frame(val[,1:2])\nval<- dcast(val, bucket ~ choice, mean)\n\nU2<-\n  mdply(types,\n        function(bucket, choice) \n          val[bucket, toString(choice)] + eps[,bucket] + lambda[bucket,\"lambda\"]*eta[,toString(choice)])\n\n\n",
+    "created" : 1413578637454.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1579546931",
+    "id" : "475E50BD",
+    "lastKnownWriteTime" : 1413657055,
+    "path" : "C:/Users/Johnny Chan/Desktop/OPNS_NestedLogit/code/m.R",
+    "project_path" : "m.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
