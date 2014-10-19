@@ -69,3 +69,22 @@ Prob2<-
   )
 colnames(Prob1)<- c("bucket", "choice", "prob")
 
+# True probability
+Prob_bucket <- function (bucket){
+  Pbucket = exp(IV$iv[bucket])/sum(exp(IV$iv))
+  return (data.frame("bucket" = 1:3,Pbucket))
+}
+
+
+Prob_choice_bucket <- function (choice,bucket){
+  Pchoice <- exp(val$val[val$choice == choice & val$bucket == bucket])/sum(exp(val$val[val$bucket==bucket]))
+  return (Pchoice)
+}
+
+trueProb <- left_join(
+  ddply(val,.(bucket,choice),summarise,PchoiceBucket = Prob_choice_bucket(choice,bucket)),
+  Prob_bucket(1:3),
+  by = "bucket"
+) %>% 
+  mutate(prob = PchoiceBucket * Pbucket) %>%
+  select(bucket,choice,prob)
