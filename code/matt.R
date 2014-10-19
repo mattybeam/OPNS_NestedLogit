@@ -20,11 +20,6 @@ nest_choice <- data.frame(
   "bucket" = apply(IV$iv + matrix(epsilon,nrow = 3,byrow = TRUE),2,which.max)
 )
 
-# nest_choice <- ldply(seq(N), function(x){
-#   util = IV$iv + rgev(n = nrow(IV), xi = 0, mu = 0, beta = 1)
-#   which.max(util)
-# }) 
-
 item_choice1 <- data.frame(
   "bucket" = nest_choice$bucket,
   "choice" = LETTERS[
@@ -53,33 +48,20 @@ item_choice2 <- data.frame(
 
 
 # Estimate choice probabilities and calculate covariance matrix using bootstrap
-
-# 1  under the traditional specification where epsilon_k resolves before eta_i
-Prob <- function(pick){
-  data.frame(
-    ProbA1 = with(pick,sum(bucket == 1 & choice == "A")/nrow(pick)),
-    ProbB1 = with(pick,sum(bucket == 1 & choice == "B")/nrow(pick)),
-    ProbC1 = with(pick,sum(bucket == 1 & choice == "C")/nrow(pick)),
-    ProbA2 = with(pick,sum(bucket == 2 & choice == "A")/nrow(pick)),
-    ProbB2 = with(pick,sum(bucket == 2 & choice == "B")/nrow(pick)),
-    ProbC2 = with(pick,sum(bucket == 2 & choice == "C")/nrow(pick)),
-    ProbA3 = with(pick,sum(bucket == 3 & choice == "A")/nrow(pick)),
-    ProbB3 = with(pick,sum(bucket == 3 & choice == "B")/nrow(pick)),
-    ProbC3 = with(pick,sum(bucket == 3 & choice == "C")/nrow(pick))
-  )
-}
-Prob1 <- Prob(item_choice1)
-   
-boot <- function(pick){
-  new_choice <- pick[sample(1:nrow(pick),100,replace = TRUE),]
-  Prob_new <- Prob(new_choice)
-  Prob_new
-}
-
+# 1 under the traditional specification where epsilon_k resolves before eta_i
 # 2 under the single-shot specification where epsilon_k and eta_i both resolve up front
-Prob2 <- Prob(item_choice2)
 
-
+k_i<- array(val[,1:2])
+Prob1<- 
+  mdply(k_i, 
+        function(k,i) with(item_choice1,sum(bucket == k & choice == i)/nrow(item_choice1))
+  )
+colnames(Prob1)<- c("bucket", "choice", "prob")
+Prob2<- 
+  mdply(k_i, 
+        function(k,i) with(item_choice2,sum(bucket == k & choice == i)/nrow(item_choice2))
+  )
+colnames(Prob1)<- c("bucket", "choice", "prob")
 
 
 # True probability
@@ -99,8 +81,8 @@ trueProb <- left_join(
   Prob_bucket(1:3),
   by = "bucket"
 ) %>% 
-  mutate(Pchoice = PchoiceBucket * Pbucket) %>%
-  select(bucket,choice,Pchoice)
+  mutate(prob = PchoiceBucket * Pbucket) %>%
+  select(bucket,choice,prob)
 
 
 
