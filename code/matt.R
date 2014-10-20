@@ -58,16 +58,29 @@ item_choice2 <- data.frame(
 # 2 under the single-shot specification where epsilon_k and eta_i both resolve up front
 
 k_i<- array(val[,1:2])
-Prob1<- 
-  mdply(k_i, 
-        function(k,i) with(item_choice1,sum(bucket == k & choice == i)/nrow(item_choice1))
-        )
-colnames(Prob1)<- c("bucket", "choice", "prob")
-Prob2<- 
-  mdply(k_i, 
-        function(k,i) with(item_choice2,sum(bucket == k & choice == i)/nrow(item_choice2))
-  )
-colnames(Prob1)<- c("bucket", "choice", "prob")
+Prob <- function(k_i, data){
+  P <- mdply(k_i, 
+        function(k,i) with(data,sum(bucket == k & choice == i)/nrow(data))
+    )
+  colnames(P)<- c("bucket", "choice", "prob")
+  return(P)
+}
+Prob1 <- Prob(k_i,item_choice1)
+Prob2 <- Prob(k_i,item_choice2)
+
+# Bootstrap covariance matrix
+b.cov <- function(data, num, size){
+  resamples <- lapply(1:num, function(i) data[sample(1:nrow(data),size,replace = TRUE),])
+  r.prob <- sapply(resamples, function(x) Prob(k_i,x)[,3])
+  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","B1","C1","A2","B2","C2","A3","B3","C3"))
+  names(covProb) <- row.names(covProb)
+  return(covProb)
+} 
+
+sigma1 <- b.cov(item_choice1,100,100)
+sigma2 <- b.cov(item_choice2,100,100)
+
+
 
 # True probability
 Prob_bucket <- function (bucket){
@@ -88,3 +101,4 @@ trueProb <- left_join(
 ) %>% 
   mutate(prob = PchoiceBucket * Pbucket) %>%
   select(bucket,choice,prob)
+
