@@ -95,10 +95,31 @@ Prob_choice_bucket <- function (choice,bucket){
 }
 
 trueProb <- left_join(
-  ddply(val,.(bucket,choice),summarise,PchoiceBucket = Prob_choice_bucket(choice,bucket)),
+  ddply(val,
+        .(bucket,choice),
+        summarise,
+        PchoiceBucket = Prob_choice_bucket(choice,bucket)),
   Prob_bucket(1:3),
   by = "bucket"
 ) %>% 
   mutate(prob = PchoiceBucket * Pbucket) %>%
   select(bucket,choice,prob)
 
+wald <- function (theta, sigma, H0){
+  W<- t(theta[-1] - H0[-1])%*%
+      inv(sigma[-1,-1])%*%
+      (theta[-1] - H0[-1])
+  return(W)
+}
+
+Test1<- Prob1 %>% arrange(bucket, choice)
+Test2<- Prob2 %>% arrange(bucket, choice)
+W1 <- wald(Test1$prob, sigma1, trueProb$prob)
+alpha <- 1-2*pchisq(W1,8) #reject hypothesis?! W1 way smaller than critical value of 17.535. Need larger to not reject at 5%.
+pchisq(17.535,8)
+
+#Can't get inverse. Weird 0 columns in sigma.
+W2<-
+  t(Prob2$prob[-1] - trueProb$prob[-1])%*%
+  inv(sigma2[-1,-1])%*%
+  (Prob2$prob[-1] - trueProb$prob[-1])
