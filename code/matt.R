@@ -33,8 +33,7 @@ item_choice1 <- data.frame(
         nrow = length(unique(val$choice)),
         ncol = N) + 
         matrix(eta,nrow = 3,byrow = TRUE),
-      2,
-      which.max)
+      2,which.max)
     ]
 )
 
@@ -73,7 +72,7 @@ Prob2 <- Prob(k_i,item_choice2)
 b.cov <- function(data, num, size){
   resamples <- lapply(1:num, function(i) data[sample(1:nrow(data),size,replace = TRUE),])
   r.prob <- sapply(resamples, function(x) Prob(k_i,x)[,3])
-  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","A2","A3","B1","B2","B3","C1","C2","C3"))
+  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","B1","C1","A2","B2","C2","A3","B3","C3"))
   names(covProb) <- row.names(covProb)
   return(covProb)
 } 
@@ -104,24 +103,20 @@ trueProb <- left_join(
   by = "bucket"
 ) %>% 
   mutate(prob = PchoiceBucket * Pbucket) %>%
-  select(bucket,choice,prob) %>%
-  arrange(choice, bucket)
+  select(bucket,choice,prob)
 
-wald <- function (theta, sigma, H0){
-  W<- t(theta[-1] - H0[-1])%*%
-      inv(sigma[-1,-1])%*%
-      (theta[-1] - H0[-1])
+wald <- function (theta, sigma, H0,rem,n = N){
+  W<- n * t(theta[-rem] - H0[-rem])%*%
+    (sigma[-rem,-rem]) %*%
+    (theta[-rem] - H0[-rem])
   return(W)
 }
 
 
-W1 <- wald(Prob1$prob, sigma1, trueProb$prob)
-alpha <- 2*(1-pchisq(W1,8)) #reject hypothesis?! W1 way smaller than critical value of 17.535. Need larger to not reject at 5%.
-pchisq(17.535,8)
-#Actually I may have gotten the direction wrong... small value is good! Results in not reject hypothesis!
+(Truth <- arrange(trueProb,choice,bucket))
+W1 <- wald(Prob1$prob, sigma1, Truth$prob,rem=-1,n=N)
+W1 > qchisq(0.95,8) # Fail to reject the null hypothesis of equal probabilities
 
-#Can't get inverse. Weird 0 columns in sigma.
-W2<-
-  t(Prob2$prob[-1] - trueProb$prob[-1])%*%
-  inv(sigma2[-1,-1])%*%
-  (Prob2$prob[-1] - trueProb$prob[-1])
+W2 <- wald(Prob2$prob,sigma2,Truth$prob,rem=c(1,2,4),n=N)
+W2 > qchisq(0.95,6) # Fail to reject the null hypothesis of equal probabilities
+
