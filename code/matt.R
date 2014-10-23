@@ -105,21 +105,18 @@ trueProb <- left_join(
   mutate(prob = PchoiceBucket * Pbucket) %>%
   select(bucket,choice,prob)
 
-wald <- function (theta, sigma, H0){
-  W<- t(theta[-1] - H0[-1])%*%
-      inv(sigma[-1,-1])%*%
-      (theta[-1] - H0[-1])
+wald <- function (theta, sigma, H0,rem,n = N){
+  W<- n * t(theta[-rem] - H0[-rem])%*%
+    (sigma[-rem,-rem]) %*%
+    (theta[-rem] - H0[-rem])
   return(W)
 }
 
-Test1<- Prob1 %>% arrange(bucket, choice)
-Test2<- Prob2 %>% arrange(bucket, choice)
-W1 <- wald(Test1$prob, sigma1, trueProb$prob)
-alpha <- 1-2*pchisq(W1,8) #reject hypothesis?! W1 way smaller than critical value of 17.535. Need larger to not reject at 5%.
-pchisq(17.535,8)
 
-#Can't get inverse. Weird 0 columns in sigma.
-W2<-
-  t(Prob2$prob[-1] - trueProb$prob[-1])%*%
-  inv(sigma2[-1,-1])%*%
-  (Prob2$prob[-1] - trueProb$prob[-1])
+(Truth <- arrange(trueProb,choice,bucket))
+W1 <- wald(Prob1$prob, sigma1, Truth$prob,rem=-1,n=N)
+W1 > qchisq(0.95,8) # Fail to reject the null hypothesis of equal probabilities
+
+W2 <- wald(Prob2$prob,sigma2,Truth$prob,rem=c(1,2,4),n=N)
+W2 > qchisq(0.95,6) # Fail to reject the null hypothesis of equal probabilities
+
