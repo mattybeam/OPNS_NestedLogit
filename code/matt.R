@@ -72,7 +72,7 @@ Prob2 <- Prob(k_i,item_choice2)
 b.cov <- function(data, num, size){
   resamples <- lapply(1:num, function(i) data[sample(1:nrow(data),size,replace = TRUE),])
   r.prob <- sapply(resamples, function(x) Prob(k_i,x)[,3])
-  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","B1","C1","A2","B2","C2","A3","B3","C3"))
+  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","A2","A3","B1","B2","B3","C1","C2","C3"))
   names(covProb) <- row.names(covProb)
   return(covProb)
 } 
