@@ -33,7 +33,8 @@ item_choice1 <- data.frame(
         nrow = length(unique(val$choice)),
         ncol = N) + 
         matrix(eta,nrow = 3,byrow = TRUE),
-      2,which.max)
+      2,
+      which.max)
     ]
 )
 
@@ -72,7 +73,7 @@ Prob2 <- Prob(k_i,item_choice2)
 b.cov <- function(data, num, size){
   resamples <- lapply(1:num, function(i) data[sample(1:nrow(data),size,replace = TRUE),])
   r.prob <- sapply(resamples, function(x) Prob(k_i,x)[,3])
-  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","B1","C1","A2","B2","C2","A3","B3","C3"))
+  covProb <- data.frame(cov(t(r.prob)),row.names = c("A1","A2","A3","B1","B2","B3","C1","C2","C3"))
   names(covProb) <- row.names(covProb)
   return(covProb)
 } 
@@ -103,7 +104,8 @@ trueProb <- left_join(
   by = "bucket"
 ) %>% 
   mutate(prob = PchoiceBucket * Pbucket) %>%
-  select(bucket,choice,prob)
+  select(bucket,choice,prob) %>%
+  arrange(choice, bucket)
 
 wald <- function (theta, sigma, H0){
   W<- t(theta[-1] - H0[-1])%*%
@@ -112,11 +114,11 @@ wald <- function (theta, sigma, H0){
   return(W)
 }
 
-Test1<- Prob1 %>% arrange(bucket, choice)
-Test2<- Prob2 %>% arrange(bucket, choice)
-W1 <- wald(Test1$prob, sigma1, trueProb$prob)
-alpha <- 1-2*pchisq(W1,8) #reject hypothesis?! W1 way smaller than critical value of 17.535. Need larger to not reject at 5%.
+
+W1 <- wald(Prob1$prob, sigma1, trueProb$prob)
+alpha <- 2*(1-pchisq(W1,8)) #reject hypothesis?! W1 way smaller than critical value of 17.535. Need larger to not reject at 5%.
 pchisq(17.535,8)
+#Actually I may have gotten the direction wrong... small value is good! Results in not reject hypothesis!
 
 #Can't get inverse. Weird 0 columns in sigma.
 W2<-
